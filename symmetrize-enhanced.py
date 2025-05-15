@@ -48,8 +48,6 @@ class MESH_OT_symmetrize_enhanced(Operator):
 
         bm = bmesh.from_edit_mesh(obj.data)
         bm.verts.ensure_lookup_table()
-        bm.edges.ensure_lookup_table()
-        bm.faces.ensure_lookup_table()
 
         origin = None
 
@@ -77,13 +75,13 @@ class MESH_OT_symmetrize_enhanced(Operator):
         for v in bm.verts:
             if v.select:
                 v.co -= origin
-        bmesh.update_edit_mesh(obj.data)
 
         bpy.ops.mesh.symmetrize(direction=self.mirror_direction)
 
         for v in bm.verts:
             if v.select:
                 v.co += origin
+
         bmesh.update_edit_mesh(obj.data)
 
         return {'FINISHED'}
