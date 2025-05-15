@@ -20,10 +20,9 @@ class MESH_OT_symmetrize_enhanced(Operator):
         ('CURSOR', "3D Cursor", ""),
         ('ACTIVE_ELEMENT', "Active Element", "")
     ],
-    default='OBJECT_ORIGIN',
+    default='CURSOR',
     description="Point to mirror around"
     ) # type: ignore
-
     
     mirror_direction: bpy.props.EnumProperty(
     name="Mirror Direction",
