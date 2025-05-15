@@ -1,24 +1,32 @@
 bl_info = {
     "name": "Symmetrize Enhanced",
     "blender": (4, 0, 2),
-    "category": "Object",
+    "category": "Mesh",
 }
 
 import bpy
+from bpy.types import Operator
+from bpy.utils import register_class, unregister_class
 
-class SimpleOperator(bpy.types.Operator):
-    bl_idname = "object.symmetrize_enhanced"
+class MESH_OT_symmetrize_enhanced(Operator):
+    bl_idname = "mesh.symmetrize_enhanced"
     bl_label = "Symmetrize Enhanced"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        self.report({'INFO'}, "Hello World")
+        bpy.ops.mesh.symmetrize()
         return {'FINISHED'}
 
+def menu_func(self, context):
+    self.layout.operator(MESH_OT_symmetrize_enhanced.bl_idname)
+
 def register():
-    bpy.utils.register_class(SimpleOperator)
+    register_class(MESH_OT_symmetrize_enhanced)
+    bpy.types.VIEW3D_MT_edit_mesh.append(menu_func)
 
 def unregister():
-    bpy.utils.unregister_class(SimpleOperator)
+    unregister_class(MESH_OT_symmetrize_enhanced)
+    bpy.types.VIEW3D_MT_edit_mesh.remove(menu_func)
 
 if __name__ == "__main__":
     register()
