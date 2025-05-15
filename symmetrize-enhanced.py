@@ -35,7 +35,7 @@ class MESH_OT_symmetrize_enhanced(Operator):
         ('NEGATIVE_Z', "-Z to +Z", ""),
         ('POSITIVE_Z', "+Z to -Z", ""),
     ],
-    default='NEGATIVE_X',
+    default='POSITIVE_X',
     description="Direction to mirror"
     ) # type: ignore
 
