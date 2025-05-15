@@ -1,5 +1,5 @@
 bl_info = {
-    "name": "My First Add-on",
+    "name": "Symmetrize Enhanced",
     "blender": (4, 0, 2),
     "category": "Object",
 }
@@ -7,8 +7,8 @@ bl_info = {
 import bpy
 
 class SimpleOperator(bpy.types.Operator):
-    bl_idname = "object.simple_operator"
-    bl_label = "Simple Operator"
+    bl_idname = "object.symmetrize_enhanced"
+    bl_label = "Symmetrize Enhanced"
 
     def execute(self, context):
         self.report({'INFO'}, "Hello World")
