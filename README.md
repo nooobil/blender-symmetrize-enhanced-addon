@@ -5,3 +5,7 @@ Adds extra functionality to Blender's built-in Symmetrize function, by allowing 
 ![](gif/3d_cursor.gif)
 - Symmetrize around the Active Element
 ![](gif/active_element.gif)
+
+# Installation
+- Download symmetrize-enhanced.py
+- Go to Blender>Edit>Preferences>Add-ons>Install an add-on>select the symmetrize-enhanced.py file
