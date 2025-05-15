@@ -40,51 +40,55 @@ class MESH_OT_symmetrize_enhanced(Operator):
     ) # type: ignore
 
     def execute(self, context):
+        import bmesh
+
         obj = context.object
-        cursor_loc = context.scene.cursor.location.copy()
+        if obj.mode != 'EDIT':
+            self.report({'ERROR'}, "Must be in Edit Mode")
+            return {'CANCELLED'}
+
+        bm = bmesh.from_edit_mesh(obj.data)
+        bm.verts.ensure_lookup_table()
+        bm.edges.ensure_lookup_table()
+        bm.faces.ensure_lookup_table()
 
         origin = None
 
         if self.mirror_origin_point == 'CURSOR':
             origin = context.scene.cursor.location.copy()
+
         elif self.mirror_origin_point == 'ACTIVE_ELEMENT':
-            import bmesh
-            bpy.ops.object.mode_set(mode='EDIT')
-            bm = bmesh.from_edit_mesh(context.object.data)
-            bm.verts.ensure_lookup_table()
-            bm.edges.ensure_lookup_table()
-            bm.faces.ensure_lookup_table()
-
             active = bm.select_history.active
-            if not active:
-                self.report({'ERROR'}, "No active element")
-                return {'CANCELLED'}
-
-            if isinstance(active, bmesh.types.BMVert):
-                origin = active.co.copy()
-            elif isinstance(active, bmesh.types.BMEdge):
-                origin = (active.verts[0].co + active.verts[1].co) / 2
-            elif isinstance(active, bmesh.types.BMFace):
-                origin = active.calc_center_median().copy()
+            if active:
+                if isinstance(active, bmesh.types.BMVert):
+                    origin = active.co.copy()
+                elif isinstance(active, bmesh.types.BMEdge):
+                    origin = (active.verts[0].co + active.verts[1].co) / 2
+                elif isinstance(active, bmesh.types.BMFace):
+                    origin = active.calc_center_median().copy()
+                else:
+                    self.report({'WARNING'}, "Unsupported active element — falling back to Object Origin")
             else:
-                self.report({'ERROR'}, "Unsupported active element")
-                return {'CANCELLED'}
-            bpy.ops.object.mode_set(mode='OBJECT')
+                self.report({'WARNING'}, "No active element — falling back to Object Origin")
 
-        if origin:
-            for vert in context.object.data.vertices:
-                vert.co -= origin
-            bpy.ops.object.mode_set(mode='EDIT')
+        # Fallback to object origin if origin wasn't set
+        if origin is None:
+            origin = obj.location.copy()
+
+        for v in bm.verts:
+            if v.select:
+                v.co -= origin
+        bmesh.update_edit_mesh(obj.data)
 
         bpy.ops.mesh.symmetrize(direction=self.mirror_direction)
 
-        if origin:
-            bpy.ops.object.mode_set(mode='OBJECT')
-            for vert in context.object.data.vertices:
-                vert.co += origin
-            bpy.ops.object.mode_set(mode='EDIT')
+        for v in bm.verts:
+            if v.select:
+                v.co += origin
+        bmesh.update_edit_mesh(obj.data)
 
         return {'FINISHED'}
+
 
 def menu_func(self, context):
     self.layout.operator(MESH_OT_symmetrize_enhanced.bl_idname)
