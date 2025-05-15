@@ -1,6 +1,8 @@
 # Blender Symmetrize Enhanced Addon
 Adds extra functionality to Blender's built-in Symmetrize function, by allowing you to mirror objects around the 3D Cursor or the Active Element.
 
+Works for v4.0.2
+
 - Symmetrize around the 3D Cursor
 ![](gif/3d_cursor.gif)
 - Symmetrize around the Active Element
