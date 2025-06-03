@@ -13,17 +13,6 @@ class MESH_OT_symmetrize_enhanced(Operator):
     bl_label = "Symmetrize Enhanced"
     bl_options = {'REGISTER', 'UNDO'}
 
-    mirror_origin_point: bpy.props.EnumProperty(
-    name="Mirror Origin",
-    items=[
-        ('OBJECT_ORIGIN', "Object Origin", ""),
-        ('CURSOR', "3D Cursor", ""),
-        ('ACTIVE_ELEMENT', "Active Element", "")
-    ],
-    default='CURSOR',
-    description="Point to mirror around"
-    ) # type: ignore
-    
     mirror_direction: bpy.props.EnumProperty(
     name="Mirror Direction",
     items=[
@@ -36,6 +25,26 @@ class MESH_OT_symmetrize_enhanced(Operator):
     ],
     default='POSITIVE_X',
     description="Direction to mirror"
+    ) # type: ignore
+
+    mirror_origin_point: bpy.props.EnumProperty(
+    name="Mirror Origin",
+    items=[
+        ('OBJECT_ORIGIN', "Object Origin", ""),
+        ('CURSOR', "3D Cursor", ""),
+        ('ACTIVE_ELEMENT', "Active Element", ""),
+    ],
+    default='ACTIVE_ELEMENT',
+    description="Point to mirror around"
+    ) # type: ignore
+
+    
+    merge_distance: bpy.props.FloatProperty(
+    name="Merge Distance",
+    description="Distance within which mirrored vertices are merged",
+    default=0.0001,
+    min=0.0,
+    soft_max=0.1
     ) # type: ignore
 
     def execute(self, context):
@@ -76,7 +85,7 @@ class MESH_OT_symmetrize_enhanced(Operator):
             if v.select:
                 v.co -= origin
 
-        bpy.ops.mesh.symmetrize(direction=self.mirror_direction)
+        bpy.ops.mesh.symmetrize(direction=self.mirror_direction, threshold=self.merge_distance)
 
         for v in bm.verts:
             if v.select:
